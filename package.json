@@ -19,6 +19,13 @@
   "author": "da99",
   "license": "MIT"
   , "dependencies" : {
-    "pg" : "0.x.x"
+    "pg"         : "0.x.x"
+    , "any-db"   : "0.x.x"
+    , "uri-js"   : "1.x.x"
+    , "reltime"  : "0.x.x"
+    , "underscore" : "1.x.x"
+  }
+  , "devDependencies" : {
+    "da_river" : "0.x.x"
   }
 }
