@@ -79,20 +79,20 @@ describe( 'Topogo', function () {
 
     }); // === end desc
 
-    describe( '.read_one_by_example', function () {
+    describe( '.read_one', function () {
       
       it( 'returns a single result', function (done) {
-        T.read_one_by_example({body: body}, flow(function (j) {
+        T.read_one({body: body}, flow(function (j) {
           assert.equal(j.result.id, id);
           done();
         }));
       });
     }); // === end desc
 
-    describe( '.read_list_by_example', function () {
+    describe( '.read_list', function () {
       
       it( 'returns a list', function (done) {
-        T.read_list_by_example({body: body}, flow(function (j) {
+        T.read_list({body: body}, flow(function (j) {
           assert.equal(j.result.length, 1);
           done();
         }));
