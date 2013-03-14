@@ -54,7 +54,7 @@ describe( 'Topogo', function () {
   // ****************** READ ****************************************
   // ****************************************************************
 
-  describe( '.read_by_id', function () {
+  describe( '.read', function () {
 
     var name = "ro ro" + rand();
     var body = "body: " + rand();
@@ -67,13 +67,37 @@ describe( 'Topogo', function () {
                  }));
     });
 
-    it( 'returns a single result', function (done) {
-      T.read_by_id(id, swap(done, function (j) {
-        assert.equal(j.result.id, id);
-        assert.equal(j.result.body, body);
-      })
-      );
-    });
+    describe( '.read_by_id', function () {
+
+      it( 'returns a single result', function (done) {
+        T.read_by_id(id, swap(done, function (j) {
+          assert.equal(j.result.id, id);
+          assert.equal(j.result.body, body);
+        })
+                    );
+      });
+
+    }); // === end desc
+
+    describe( '.read_one_by_example', function () {
+      
+      it( 'returns a single result', function (done) {
+        T.read_one_by_example({body: body}, flow(function (j) {
+          assert.equal(j.result.id, id);
+          done();
+        }));
+      });
+    }); // === end desc
+
+    describe( '.read_list_by_example', function () {
+      
+      it( 'returns a list', function (done) {
+        T.read_list_by_example({body: body}, flow(function (j) {
+          assert.equal(j.result.length, 1);
+          done();
+        }));
+      });
+    }); // === end desc
 
   }); // === end desc
 
