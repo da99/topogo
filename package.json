@@ -25,6 +25,5 @@
     "underscore": "1.x.x"
   },
   "devDependencies": {
-    "da_river": "0.x.x"
   }
 }
