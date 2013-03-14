@@ -15,7 +15,19 @@ describe( 'Topogo', function () {
   before(function (done) {
     Topogo.run("CREATE TABLE IF NOT EXISTS " + table +
                " ( id serial PRIMARY KEY, name varchar(10), " +
-               " body text );", [], redo(done));
+               " body text , " +
+               " trashed_at BIGINT );", [], redo(done));
+  });
+
+  var name = "ro ro" + rand();
+  var body = "body: " + rand();
+  var id   = "wrong_id";
+
+  before(function (done) {
+    Topogo.run('INSERT INTO ' + table +  ' (name, body) VALUES ($1, $2) RETURNING * ;',
+               [name, body], swap(done, function (j) {
+                 id = j.result[0].id;
+               }));
   });
 
   after(function (done) {
@@ -56,17 +68,6 @@ describe( 'Topogo', function () {
 
   describe( '.read', function () {
 
-    var name = "ro ro" + rand();
-    var body = "body: " + rand();
-    var id = "wrong_id";
-
-    before(function (done) {
-      Topogo.run('INSERT INTO ' + table +  ' (name, body) VALUES ($1, $2) RETURNING * ;',
-                 [name, body], swap(done, function (j) {
-                   id = j.result[0].id;
-                 }));
-    });
-
     describe( '.read_by_id', function () {
 
       it( 'returns a single result', function (done) {
@@ -80,7 +81,7 @@ describe( 'Topogo', function () {
     }); // === end desc
 
     describe( '.read_one', function () {
-      
+
       it( 'returns a single result', function (done) {
         T.read_one({body: body}, flow(function (j) {
           assert.equal(j.result.id, id);
@@ -90,7 +91,7 @@ describe( 'Topogo', function () {
     }); // === end desc
 
     describe( '.read_list', function () {
-      
+
       it( 'returns a list', function (done) {
         T.read_list({body: body}, flow(function (j) {
           assert.equal(j.result.length, 1);
@@ -110,17 +111,6 @@ describe( 'Topogo', function () {
 
   describe( '.update', function () {
 
-    var name = "ro ro" + rand();
-    var body = "body: " + rand();
-    var id = "wrong_id";
-
-    before(function (done) {
-      Topogo.run('INSERT INTO ' + table +  ' (name, body) VALUES ($1, $2) RETURNING * ;',
-                 [name, body], swap(done, function (j) {
-                   id = j.result[0].id;
-                 }));
-    });
-
     it( 'updates record with string id', function (done) {
       body = "new body " + rand();
       T.update(id.toString(), {body: body}, flow(function (j) {
@@ -134,6 +124,23 @@ describe( 'Topogo', function () {
       }));
     });
 
+  }); // === end desc
+
+  // ****************************************************************
+  // ****************** Trash ***************************************
+  // ****************************************************************
+
+  describe( '.trash', function () {
+    it( 'updates column trashed_at to a timestamp epoch', function (done) {
+      T.trash(id, flow(function (j) {
+        T.read_by_id(id, flow(function (j) {
+          var val = j.result.trashed_at.toString();
+          assert.equal(val.match(/^\d+$/)[0], val);
+          assert.equal(val.length, (new Date).getTime().toString().length);
+          done();
+        }));
+      }));
+    });
   }); // === end desc
 
 }); // === end desc
