@@ -164,6 +164,36 @@ describe( 'Topogo', function () {
     });
   }); // === end desc
 
+  describe( '.delete_trashed', function () {
+
+    it( 'does not delete records younger than days specified', function (done) {
+      var day_4 = (new Date).getTime() - (1000 * 60 * 60 * 24 * 4);
+      var day_almost_4 = day_4 + 30000;
+      T.update(id, {trashed_at: day_almost_4}, flow(function (j) {
+        T.delete_trashed(4, flow(function (j) {
+          assert.equal(j.result.length, 0);
+
+          T.read_by_id(id, flow(function (j) {
+            assert.equal(j.result.id, id);
+            done();
+          }));
+
+        }));
+      }));
+    });
+
+    it( 'deletes records older than days specified', function (done) {
+      var day_3 = (new Date).getTime() - (1000 * 60 * 60 * 24 * 3);
+      T.update(id, {trashed_at: day_3}, flow(function (j) {
+        T.delete_trashed(3, flow(function (j) {
+          assert.equal(j.result[0].id, id);
+          done();
+        }));
+      }));
+    });
+
+
+  }); // === end desc
 }); // === end desc
 
 
