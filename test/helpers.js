@@ -46,7 +46,7 @@ exports.ago = function (english) {
 
 Topogo.prototype.drop = function (flow) {
   var me = this;
-  return Topogo.run(me, "DROP TABLE " + me.table + '; ', [], flow);
+  return Topogo.run(me, "DROP TABLE IF EXISTS " + me.table + '; ', [], flow);
 };
 
 Topogo.prototype.delete_all = function (flow) {

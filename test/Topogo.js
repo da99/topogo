@@ -5,7 +5,7 @@ var _      = require('underscore')
 , assert   = require('assert')
 ;
 
-var table = "test_test_Topogo_xyz";
+var table = Topogo.test_table_name;
 var T     = Topogo.new(table);
 var Q     = T.pool();
 var no_fin = function () {};
