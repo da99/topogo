@@ -1,0 +1,21 @@
+{
+  "name": "topogo",
+  "version": "0.0.0",
+  "description": "Personal Postgresql 9.2+ client, built on npm package PG.",
+  "main": "lib/Topogo.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/da99/topogo.git"
+  },
+  "keywords": [
+    "da99"
+  ],
+  "author": "da99",
+  "license": "MIT"
+}
