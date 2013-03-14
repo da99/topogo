@@ -3,6 +3,7 @@ var _      = require('underscore')
 , Topogo   = require('topogo').Topogo
 , River    = require('da_river').River
 , assert   = require('assert')
+, h        = require('topogo/test/helpers/main').init(eval)
 ;
 
 var table = Topogo.test_table_name;
@@ -197,62 +198,6 @@ describe( 'Topogo', function () {
 }); // === end desc
 
 
-
-
-
-// ****************************************************************
-// ****************** Helpers *************************************
-// ****************************************************************
-
-
-function redo(done) {
-  return flow(function () {}, done);
-}
-
-function fin(f) {
-  return flow(f, function () {});
-}
-
-function swap(done, f) {
-  return flow(f, done);
-}
-
-function flow(f, done) {
-  var reps = [function (rep) {
-    f(rep);
-    if (done)
-      done();
-  }];
-  var fake_job =  {
-    replys: [],
-    reply : function (func) {
-      reps.push(func);
-      return this;
-    },
-    finish : function (results, err) {
-      if (err)
-        throw err;
-      this.result = results;
-      this.replys.push(results);
-      reps.pop()(this);
-      return this;
-    }
-  };
-
-  return fake_job
-}
-
-function is_date(obj) {
-  return !!obj.toString().match(/\w+ \w+ \d\d \d+ \d\d/)[0];
-}
-
-function rand() {
-  return parseInt(Math.random() * 100);
-};
-
-function days_ago(i) {
-  return (new Date).getTime() - (1000 * 60 * 60 * 24 * i);
-}
 
 
 
