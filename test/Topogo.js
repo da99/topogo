@@ -33,6 +33,11 @@ describe( 'Topogo', function () {
     });
   }); // === end desc
 
+  // ****************************************************************
+  // ****************** CREATE **************************************
+  // ****************************************************************
+
+
   describe( '.create', function () {
     it( 'inserts object as row', function (done) {
       var body = Math.random(1000) + "";
@@ -43,6 +48,41 @@ describe( 'Topogo', function () {
       );
     });
   }); // === end desc
+
+
+  // ****************************************************************
+  // ****************** READ ****************************************
+  // ****************************************************************
+
+  describe( '.read_by_id', function () {
+
+    var name = "ro ro" + rand();
+    var body = "body: " + rand();
+    var id = "wrong_id";
+
+    before(function (done) {
+      Topogo.run('INSERT INTO ' + table +  ' (name, body) VALUES ($1, $2) RETURNING * ;',
+                 [name, body], swap(done, function (j) {
+                   id = j.result[0].id;
+                 }));
+    });
+
+    it( 'returns a single result', function (done) {
+      T.read_by_id(id, swap(done, function (j) {
+        assert.equal(j.result.id, id);
+        assert.equal(j.result.body, body);
+      })
+      );
+    });
+
+  }); // === end desc
+
+
+
+  // ****************************************************************
+  // ****************** UPDATE **************************************
+  // ****************************************************************
+
 
   describe( '.update', function () {
 
