@@ -18,4 +18,7 @@
   ],
   "author": "da99",
   "license": "MIT"
+  , "dependencies" : {
+    "pg" : "0.x.x"
+  }
 }
