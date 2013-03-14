@@ -127,17 +127,38 @@ describe( 'Topogo', function () {
   }); // === end desc
 
   // ****************************************************************
-  // ****************** Trash ***************************************
+  // ****************** Trash/Untrash *******************************
   // ****************************************************************
 
   describe( '.trash', function () {
-    it( 'updates column trashed_at to a timestamp epoch', function (done) {
+    it( 'updates column trashed_at to: timestamp epoch', function (done) {
+
+      var l = ((new Date).getTime() + '').length;
+
       T.trash(id, flow(function (j) {
+
+        assert.equal((j.result.trashed_at+'').length, l);
+
         T.read_by_id(id, flow(function (j) {
-          var val = j.result.trashed_at.toString();
-          assert.equal(val.match(/^\d+$/)[0], val);
-          assert.equal(val.length, (new Date).getTime().toString().length);
+          var val = j.result.trashed_at;
+          assert.equal(_.isNumber(val), true);
+          assert.equal((val+'').length, l);
           done();
+        }));
+
+      }));
+    });
+  }); // === end desc
+
+  describe( '.untrash', function () {
+    it( 'updates column trashed_at to: null', function (done) {
+      T.trash(id, flow(function (j) {
+        T.untrash(id, flow(function (j) {
+          T.read_by_id(id, flow(function (j) {
+            assert.equal(j.result.trashed_at, null);
+            assert.equal(j.result.id, id);
+            done();
+          }));
         }));
       }));
     });
