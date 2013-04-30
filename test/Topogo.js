@@ -257,7 +257,7 @@ describe( 'Topogo', function () {
         assert.equal(last.length, 0);
         j.finish();
       })
-      .job(function (j, last) {
+      .job(function (j) {
         T.read_by_id(id, j);
       })
       .job(function (j, last) {
