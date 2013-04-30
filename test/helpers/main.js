@@ -16,90 +16,83 @@ Topogo.prototype.delete_all = function (flow) {
   return Topogo.run(this, sql, [], flow);
 };
 
-exports.init = function (outer_eval) {
+var o = module.exports = {};
 
-  var o = {};
+o.throw_it = function () {
+  throw new Error(arguments.toString());
+}
 
-  o.throw_it = function () {
-    throw new Error(arguments.toString());
-  }
+o.utc_timestamp = function () {
+  var d = new Date;
+  return (d.getTime() + d.getTimezoneOffset()*60*1000);
+}
 
-  o.utc_timestamp = function () {
-    var d = new Date;
-    return (d.getTime() + d.getTimezoneOffset()*60*1000);
-  }
+o.utc_diff = function (date) {
+  if (date && date.getTime)
+    date = date.getTime();
+  return exports.utc_timestamp() - date;
+}
 
-  o.utc_diff = function (date) {
-    if (date && date.getTime)
-      date = date.getTime();
-    return exports.utc_timestamp() - date;
-  }
+o.is_recent = function (date) {
+  if (_.isNumber(date) && !_.isNaN(date))
+    return ((new Date()).getTime() - date) < 500;
+  return exports.utc_diff(date) < 1000;
+}
 
-  o.is_recent = function (date) {
-    if (_.isNumber(date) && !_.isNaN(date))
-      return ((new Date()).getTime() - date) < 500;
-    return exports.utc_diff(date) < 1000;
-  }
+// ****************************************************************
+// ****************** Main Helpers ********************************
+// ****************************************************************
 
-  // ****************************************************************
-  // ****************** Main Helpers ********************************
-  // ****************************************************************
+o.redo = function (done) {
+  return flow(function () {}, done);
+}
 
-  o.redo = function (done) {
-    return flow(function () {}, done);
-  }
+o.fin = function (f) {
+  return flow(f, function () {});
+}
 
-  o.fin = function (f) {
-    return flow(f, function () {});
-  }
+o.swap = function (done, f) {
+  return flow(f, done);
+}
 
-  o.swap = function (done, f) {
-    return flow(f, done);
-  }
-
-  o.flow = function (f, done) {
-    var reps = [function (rep) {
-      f(rep);
-      if (done)
-        done();
-    }];
-    var fake_job =  {
-      replys: [],
-      reply : function (func) {
-        reps.push(func);
-        return this;
-      },
-      finish : function (results, err) {
-        if (err)
-          throw err;
-        this.result = results;
-        this.replys.push(results);
-        reps.pop()(this);
-        return this;
-      }
-    };
-
-    return fake_job
-  }
-
-  o.is_date = function (obj) {
-    return !!obj.toString().match(/\w+ \w+ \d\d \d+ \d\d/)[0];
-  }
-
-  o.rand = function () {
-    return parseInt(Math.random() * 100);
+o.flow = function (f, done) {
+  var reps = [function (rep) {
+    f(rep);
+    if (done)
+      done();
+  }];
+  var fake_job =  {
+    replys: [],
+    reply : function (func) {
+      reps.push(func);
+      return this;
+    },
+    finish : function (results, err) {
+      if (err)
+        throw err;
+      this.result = results;
+      this.replys.push(results);
+      reps.pop()(this);
+      return this;
+    }
   };
 
-  o.days_ago = function (i) {
-    return (new Date).getTime() - (1000 * 60 * 60 * 24 * i);
-  }
+  return fake_job
+}
 
-  _.each(o, function (f, name) {
-    outer_eval("var " + name + " = " + f.toString() + ' ; ');
-  });
+o.is_date = function (obj) {
+  return !!obj.toString().match(/\w+ \w+ \d\d \d+ \d\d/)[0];
+}
 
-  return o;
-}; // exports.init
+o.rand = function () {
+  return parseInt(Math.random() * 100);
+};
+
+o.days_ago = function (i) {
+  return (new Date).getTime() - (1000 * 60 * 60 * 24 * i);
+}
+
+
 
 
 
