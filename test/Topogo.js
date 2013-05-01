@@ -6,7 +6,7 @@ var _      = require('underscore')
 , H        = require('./helpers/main')
 ;
 
-var table = Topogo.test_table_name;
+var table = Topogo.test_table_name.toUpperCase();
 var T     = Topogo.new(table);
 var Q     = T.pool();
 var no_fin = function () {};
@@ -35,8 +35,8 @@ describe( 'Topogo', function () {
   before(function (done) {
     R(done)
     .job(function (j) {
-      Topogo.run("CREATE TABLE IF NOT EXISTS " + table +
-                 " ( id serial PRIMARY KEY, name varchar(10), " +
+      Topogo.run("CREATE TABLE IF NOT EXISTS \"" + table +
+                 "\" ( id serial PRIMARY KEY, name varchar(10), " +
                  " body text , " +
                  " trashed_at BIGINT );", [], j);
     })
@@ -52,7 +52,7 @@ describe( 'Topogo', function () {
   before(function (done) {
     R(done)
     .job(function (j) {
-      var sql = 'INSERT INTO ' + table +  ' (name, body) VALUES ($1, $2) RETURNING * ;';
+      var sql = 'INSERT INTO \"' + table +  '\" (name, body) VALUES ($1, $2) RETURNING * ;';
       Topogo.run(sql, [name, body], j);
     })
     .job(function (j, last) {
@@ -65,7 +65,7 @@ describe( 'Topogo', function () {
   after(function (done) {
     R(done)
     .job(function (j) {
-      Topogo.run("DELETE FROM " + table + ";", [], j);
+      Topogo.run("DELETE FROM \"" + table + "\";", [], j);
     })
     .run();
   });
@@ -179,7 +179,8 @@ describe( 'Topogo', function () {
       })
       .job(function (j, last) {
         assert.equal(last.id, id);
-        Q.query('SELECT * from ' + table + ' WHERE body = $1 LIMIT 1;', [body], function (err, result) {
+        Q.query('SELECT * from \"' + table + '\" WHERE body = $1 LIMIT 1;', [body], function (err, result) {
+          if (err) throw err;
           var row = result.rows[0];
           assert.equal(row.body, body);
           assert.equal(row.id, id);
