@@ -235,7 +235,7 @@ describe( 'Topogo', function () {
         T.trash(id, j);
       })
       .job(function (j, last) {
-        assert.equal(is_recent(last[0].trashed_at), true);
+        assert.equal(is_recent(last.trashed_at), true);
         j.finish();
       })
       .job(function (j) {
@@ -243,6 +243,18 @@ describe( 'Topogo', function () {
       })
       .job(function (j, last) {
         assert.equal(is_recent(last.trashed_at), true);
+        done();
+      })
+      .run();
+    });
+
+    it( 'passes first record to next job', function (done) {
+      River.new(null)
+      .job(function (j) {
+        T.trash(id, j);
+      })
+      .job(function (j, last) {
+        assert.equal(last.id, id);
         done();
       })
       .run();
