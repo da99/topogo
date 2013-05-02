@@ -88,8 +88,8 @@ o.rand = function () {
   return parseInt(Math.random() * 100);
 };
 
-o.days_ago = function (i) {
-  return (new Date).getTime() - (1000 * 60 * 60 * 24 * i);
+o.days_ago = function (i, almost) {
+  return new Date((new Date).getTime() - (1000 * 60 * 60 * 24 * i) + (almost || 0));
 }
 
 

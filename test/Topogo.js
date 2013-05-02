@@ -28,6 +28,10 @@ var R = function (done) {
   };
 };
 
+function is_recent(date) {
+  return ((new Date).getTime() - date.getTime()) < 80;
+}
+
 function rand() { return parseInt(Math.random() * 1000); }
 
 describe( 'Topogo', function () {
@@ -35,10 +39,15 @@ describe( 'Topogo', function () {
   before(function (done) {
     R(done)
     .job(function (j) {
+      Topogo.run("DROP TABLE IF EXISTS \"" + table + "\";", [], j);
+    })
+    .job(function (j) {
       Topogo.run("CREATE TABLE IF NOT EXISTS \"" + table +
                  "\" ( id serial PRIMARY KEY, name varchar(10), " +
                  " body text , " +
-                 " trashed_at BIGINT );", [], j);
+                 " created_at $now_tz , " +
+                 " updated_at $null_tz , " +
+                 " trashed_at $null_tz );", [], j);
     })
     .run();
   });
@@ -84,9 +93,9 @@ describe( 'Topogo', function () {
     });
   }); // === end desc
 
-  // ****************************************************************
-  // ****************** CREATE **************************************
-  // ****************************************************************
+  // ================================================================
+  // ================== CREATE ======================================
+  // ================================================================
 
 
   describe( '.create', function () {
@@ -106,9 +115,9 @@ describe( 'Topogo', function () {
   }); // === end desc
 
 
-  // ****************************************************************
-  // ****************** READ ****************************************
-  // ****************************************************************
+  // ================================================================
+  // ================== READ ========================================
+  // ================================================================
 
   describe( '.read', function () {
 
@@ -164,9 +173,9 @@ describe( 'Topogo', function () {
 
 
 
-  // ****************************************************************
-  // ****************** UPDATE **************************************
-  // ****************************************************************
+  // ================================================================
+  // ================== UPDATE ======================================
+  // ================================================================
 
 
   describe( '.update', function () {
@@ -191,9 +200,9 @@ describe( 'Topogo', function () {
 
   }); // === end desc
 
-  // ****************************************************************
-  // ****************** Trash/Untrash *******************************
-  // ****************************************************************
+  // ================================================================
+  // ================== Trash/Untrash ===============================
+  // ================================================================
 
   describe( '.trash', function () {
     it( 'updates column trashed_at to: timestamp epoch', function (done) {
@@ -205,16 +214,14 @@ describe( 'Topogo', function () {
         T.trash(id, j);
       })
       .job(function (j, last) {
-        assert.equal((last.trashed_at+'').length, l);
+        assert.equal(is_recent(last[0].trashed_at), true);
         j.finish();
       })
       .job(function (j) {
         T.read_by_id(id, j);
       })
       .job(function (j, last) {
-        var val = last.trashed_at;
-        assert.equal(_.isNumber(val), true);
-        assert.equal((val+'').length, l);
+        assert.equal(is_recent(last.trashed_at), true);
         done();
       })
       .run();
@@ -246,7 +253,8 @@ describe( 'Topogo', function () {
 
     it( 'does not delete records younger than days specified', function (done) {
       var day_4 = H.days_ago(4);
-      var day_almost_4 = day_4 + 3000;
+      var day_almost_4 = H.days_ago(4, 3000);
+
       River.new(null)
       .job(function (j) {
         T.update(id, {trashed_at: day_almost_4}, j);
