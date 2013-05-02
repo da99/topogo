@@ -200,6 +200,27 @@ describe( 'Topogo', function () {
 
   }); // === end desc
 
+  describe( '.update_and_stamp', function () {
+    it( 'updates record with time stamp', function (done) {
+      body = "new body " + rand();
+      River.new(null)
+      .job(function (j) {
+        T.update_and_stamp(id.toString(), {body: body}, j);
+      })
+      .job(function (j, last) {
+        assert.equal(last.id, id);
+        Q.query('SELECT * from \"' + table + '\" WHERE body = $1 LIMIT 1;', [body], function (err, result) {
+          if (err) throw err;
+          var row = result.rows[0];
+          assert.equal(row.body, body);
+          assert.equal(row.id, id);
+          assert.equal(is_recent(row.updated_at), true);
+          done();
+        });
+      }).run();
+    });
+  }); // === end desc
+
   // ================================================================
   // ================== Trash/Untrash ===============================
   // ================================================================
