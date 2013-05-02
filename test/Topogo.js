@@ -280,6 +280,18 @@ describe( 'Topogo', function () {
       })
       .run();
     });
+
+    it( 'passes first record to next job', function (done) {
+      River.new(null)
+      .job(function (j) {
+        T.untrash(id, j);
+      })
+      .job(function (j, last) {
+        assert.equal(last.id, id);
+        done();
+      })
+      .run();
+    });
   }); // === end desc
 
   describe( '.delete_trashed', function () {
