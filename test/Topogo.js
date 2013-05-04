@@ -43,11 +43,13 @@ describe( 'Topogo', function () {
     })
     .job(function (j) {
       Topogo.run("CREATE TABLE IF NOT EXISTS \"" + table +
-                 "\" ( id serial PRIMARY KEY, name varchar(10), " +
-                 " body text , " +
-                 " created_at $now_tz , " +
-                 " updated_at $null_tz , " +
-                 " trashed_at $null_tz );", [], j);
+                 "\" (\n" +
+                 " id serial PRIMARY KEY, \n" +
+                 " name varchar(10), \n" +
+                 " body text ,   \n" +
+                 " $created_at , \n" +
+                 " $updated_at , \n" +
+                 " $trashed_at   \n);", [], j);
     })
     .run();
   });
