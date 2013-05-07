@@ -1,5 +1,5 @@
 var _         = require('underscore')
-, Topogo      = require('topogo').Topogo
+, Topogo      = require('../../lib/Topogo').Topogo
 ;
 
 process.on('SIGTERM', Topogo.close);

@@ -1,9 +1,9 @@
 
 var _      = require('underscore')
-, Topogo   = require('topogo').Topogo
+, Topogo   = require('../lib/Topogo').Topogo
+, H        = require('./helpers/main')
 , River    = require('da_river').River
 , assert   = require('assert')
-, H        = require('./helpers/main')
 ;
 
 var table = Topogo.test_table_name.toUpperCase();
