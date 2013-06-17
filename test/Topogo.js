@@ -185,6 +185,17 @@ describe('Topogo', function () {
         .run();
       });
 
+      it( 'convers id to: {id: id}', function (done) {
+        River.new(null)
+        .job(function (j) {
+          T.read_list(id, j);
+        })
+        .job(function (j, last) {
+          assert.equal(last.length, 1);
+          done();
+        })
+        .run();
+      });
     }); // === end desc
 
   }); // === end desc
