@@ -107,13 +107,26 @@ describe('Topogo', function () {
       .run();
     });
 
-    it( 'replaces all instances of values', function (done) {
+    it( 'replaces all instances of values in SELECT', function (done) {
       River.new(null)
       .job(function (j) {
         Topogo.run("SELECT @t.* FROM @t WHERE name = @name AND name = @name", {TABLES: {t: table}, name: name}, j);
       })
       .job(function (j, result) {
         assert.equal(result[0].name, name);
+        done();
+      })
+      .run();
+    });
+
+    it( 'replaces all instances of values in INSERT statements', function (done) {
+      River.new(null)
+      .job(function (j) {
+        Topogo.run(Topogo.new(table), "INSERT INTO @table (name, body) VALUES (@name, @body) RETURNING * ;", {name: name, body: "123"}, j);
+      })
+      .job(function (j, result) {
+        assert.equal(result[0].name, name);
+        assert.equal(result[0].body, '123');
         done();
       })
       .run();
