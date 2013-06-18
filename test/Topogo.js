@@ -95,6 +95,18 @@ describe('Topogo', function () {
       .run();
     });
 
+    it( 'replaces all instances of @table with quoted table name', function (done) {
+      River.new(null)
+      .job(function (j) {
+        Topogo.run(Topogo.new(table), "SELECT @table.* FROM @table WHERE name = @name AND name = @name", {name: name}, j);
+      })
+      .job(function (j, result) {
+        assert.equal(result[0].name, name);
+        done();
+      })
+      .run();
+    });
+
     it( 'replaces all instances of values', function (done) {
       River.new(null)
       .job(function (j) {
