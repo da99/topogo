@@ -1,6 +1,6 @@
 {
   "name": "topogo",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Personal Postgresql 9.2+ client, built on npm package PG. Not fit for human consumption",
   "main": "lib/Topogo.js",
   "directories": {
