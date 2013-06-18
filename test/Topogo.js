@@ -94,6 +94,18 @@ describe('Topogo', function () {
       })
       .run();
     });
+
+    it( 'replaces all instances of values', function (done) {
+      River.new(null)
+      .job(function (j) {
+        Topogo.run("SELECT @t.* FROM @t WHERE name = @name AND name = @name", {TABLES: {t: table}, name: name}, j);
+      })
+      .job(function (j, result) {
+        assert.equal(result[0].name, name);
+        done();
+      })
+      .run();
+    });
   }); // === end desc
 
   // ================================================================
