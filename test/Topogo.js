@@ -56,7 +56,7 @@ describe( 'Model:', function () {
 
   describe( '.select', function () {
     it( 'generates a SELECT statement', function () {
-      var target = 'SELECT "T".* , "T"."id" , "W"."trashed_at" FROM "T"';
+      var target = 'SELECT "T".* , "T"."id" , "W"."trashed_at" FROM "T" LIMIT 15';
       var pair = Topogo.select(['T', '*'], ['T', 'id'], ['W', 'trashed_at']).from('T').end();
       assert.equal(strip(pair[0]), strip(target));
     });
@@ -64,12 +64,24 @@ describe( 'Model:', function () {
 
   describe( '.from', function () {
     it( 'generates a FROM statement', function () {
-      var target = 'SELECT "T".* FROM "T" INNER JOIN "W" ON "T"."id" = "W"."id"';
+      var target = 'SELECT "T".* FROM "T" INNER JOIN "W" ON "T"."id" = "W"."id" LIMIT 15';
       var pair = Topogo.select(['T', '*']).from(['T','id'], ['W','id'], 'inner join').end();
       assert.equal(strip(pair[0]), strip(target));
     });
   }); // === end desc
 
+  describe( '.where', function () {
+    it( 'generates a WHERE statement', function () {
+      var target = 'SELECT "T".* FROM "T" WHERE "T"."id" = $1 AND "SN"."s" = $2 LIMIT 15';
+      var pair = Topogo
+      .select(['T', '*'])
+      .from('T')
+      .where([['T','id'], '=', 0], 'AND', [['SN', 's'], '=', 3])
+      .end();
+
+      assert.equal(strip(pair[0]), strip(target));
+    });
+  }); // === end desc
 }); // === end desc
 
 describe('Main functionality:', function () {
