@@ -34,8 +34,25 @@ function is_recent(date) {
 
 function rand() { return parseInt(Math.random() * 1000); }
 
+describe( 'Model:', function () {
 
-describe('Topogo', function () {
+  describe( '.select_as', function () {
+    it( 'returns a SELECT substring', function () {
+      var target = '"Website".id AS "Website_id", "Website".trashed_at AS "Website_trashed_at"';
+      assert.equal(Topogo.select_as('Website', 'id', 'trashed_at'), target);
+    });
+  }); // === end desc
+
+  describe( '.values_from', function () {
+    it( 'returns an object without table prefixes', function () {
+      var o = Topogo.values_from('Website', {'Website_id': 1, 'Website_trashed_at': 2});
+      assert.deepEqual(o, {id: 1,trashed_at: 2});
+    });
+  }); // === end desc
+
+}); // === end desc
+
+describe('Main functionality:', function () {
 
   before(function (done) {
     R(done)
