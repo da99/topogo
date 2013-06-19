@@ -84,7 +84,21 @@ describe( 'Model:', function () {
   }); // === end desc
 }); // === end desc
 
-describe('Main functionality:', function () {
+describe( 'Describe tables:', function () {
+  it( 'describes tables', function (done) {
+    River.new()
+    .job(function (j) {
+      Topogo.tables(j);
+    })
+    .job(function (j, o) {
+      assert.deepEqual(o[table], ["id","name","body","created_at","updated_at","trashed_at"]);
+      done();
+    })
+    .run();
+  });
+}); // === end desc
+
+describe('Topogo:', function () {
 
   before(function (done) {
     R(done)
