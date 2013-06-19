@@ -34,6 +34,10 @@ function is_recent(date) {
 
 function rand() { return parseInt(Math.random() * 1000); }
 
+function strip(s) {
+  return s.trim().split(/[\s\n]+/).join(" ");
+}
+
 describe( 'Model:', function () {
 
   describe( '.select_as', function () {
@@ -47,6 +51,22 @@ describe( 'Model:', function () {
     it( 'returns an object without table prefixes', function () {
       var o = Topogo.values_from('Website', {'Website_id': 1, 'Website_trashed_at': 2});
       assert.deepEqual(o, {id: 1,trashed_at: 2});
+    });
+  }); // === end desc
+
+  describe( '.select', function () {
+    it( 'generates a SELECT statement', function () {
+      var target = 'SELECT "T".* , "T"."id" , "W"."trashed_at" FROM "T"';
+      var pair = Topogo.select(['T', '*'], ['T', 'id'], ['W', 'trashed_at']).from('T').end();
+      assert.equal(strip(pair[0]), strip(target));
+    });
+  }); // === end desc
+
+  describe( '.from', function () {
+    it( 'generates a FROM statement', function () {
+      var target = 'SELECT "T".* FROM "T" INNER JOIN "W" ON "T"."id" = "W"."id"';
+      var pair = Topogo.select(['T', '*']).from(['T','id'], ['W','id'], 'inner join').end();
+      assert.equal(strip(pair[0]), strip(target));
     });
   }); // === end desc
 
