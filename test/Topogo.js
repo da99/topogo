@@ -88,16 +88,24 @@ describe( 'Model:', function () {
       Topogo._tables = {};
     });
 
-    it( 'generates a WHERE substring with trashed_at', function () {
+    it( 'uses col: trashed_at', function () {
       Topogo._tables = {T: ['trashed_at'], W: ['trashed_at'], Z: []}
       var target = '( ("T"."trashed_at" IS NULL AND "W"."trashed_at" IS NULL) )';
       var val    = Topogo.where_readable('T', 'W', 'Z');
       assert.equal(strip(val), strip(target));
     });
 
-    it( 'generates a WHERE substring with author_id or owner_id', function () {
+    it( 'uses cols: author_id, owner_id', function () {
       Topogo._tables = {T: ['owner_id'], W: ['author_id'], Z: []}
       var target = '( ("T"."owner_id" IN @sn_ids AND "W"."author_id" IN @sn_ids) )';
+      var val    = Topogo.where_readable('T', 'W', 'Z');
+      assert.equal(strip(val), strip(target));
+    });
+
+    it( 'uses cols: trashed_at, author_id, owner_id', function () {
+      Topogo._tables = {T: ['trashed_at', 'owner_id'], W: ['author_id'], Z: ['trashed_at']}
+      var target = '( ("T"."trashed_at" IS NULL AND "Z"."trashed_at" IS NULL) OR \
+      ("T"."owner_id" IN @sn_ids AND "W"."author_id" IN @sn_ids) )';
       var val    = Topogo.where_readable('T', 'W', 'Z');
       assert.equal(strip(val), strip(target));
     });
