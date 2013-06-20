@@ -48,7 +48,7 @@ describe( 'Model:', function () {
 
   describe( '.select_as', function () {
     it( 'returns a SELECT substring', function () {
-      var target = '"Website".id AS "Website_id", "Website".trashed_at AS "Website_trashed_at"';
+      var target = '"Website"."id" AS "Website_id", "Website"."trashed_at" AS "Website_trashed_at"';
       assert.equal(Topogo.select_as('Website', 'id', 'trashed_at'), target);
     });
   }); // === end desc
@@ -62,7 +62,7 @@ describe( 'Model:', function () {
 
   describe( '.select', function () {
     it( 'generates a SELECT statement', function () {
-      var target = 'SELECT "T".* , "T"."id" , "W"."trashed_at" FROM "T" LIMIT 15';
+      var target = 'SELECT "T".*, "T"."id", "W"."trashed_at" FROM "T" LIMIT 15';
       var pair = Topogo.select(['T', '*'], ['T', 'id'], ['W', 'trashed_at']).from('T').end();
       assert.equal(strip(pair[0]), strip(target));
     });
