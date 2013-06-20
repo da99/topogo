@@ -82,6 +82,21 @@ describe( 'Model:', function () {
       assert.equal(strip(pair[0]), strip(target));
     });
   }); // === end desc
+
+  describe( '.where_readable', function () {
+    after(function () {
+      Topogo._tables = {};
+    });
+
+    it( 'generates a WHERE substring with trashed_at', function () {
+      Topogo._tables = {T: ['trashed_at'], W: ['trashed_at'], Z: []}
+      var target = '( ("T"."trashed_at" IS NULL AND "W"."trashed_at" IS NULL) )';
+      var val    = Topogo.where_readable('T', 'W', 'Z');
+      console.log(val)
+      assert.equal(strip(val), strip(target));
+    });
+  }); // === end desc
+
 }); // === end desc
 
 describe( 'Describe tables:', function () {
