@@ -146,6 +146,9 @@ describe('Topogo:', function () {
                  " id serial PRIMARY KEY, \n" +
                  " name varchar(10), \n" +
                  " body text ,   \n" +
+                 " website_id  $id_type , \n" +
+                 " $owner_able , \n" +
+                 " $author_able , \n" +
                  " $created_at , \n" +
                  " $updated_at , \n" +
                  " $trashed_at   \n);", [], j);
