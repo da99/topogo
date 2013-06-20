@@ -174,6 +174,9 @@ describe('Topogo:', function () {
     .run();
   });
 
+  // ================================================================
+  // ================== .run ========================================
+  // ================================================================
   describe( '.run', function () {
     it( 'uses process.DATABASE_URL by default', function (done) {
       River.new(null)
@@ -211,6 +214,18 @@ describe('Topogo:', function () {
       .run();
     });
 
+    it( 'replaces vars for arrays with "[ $n, $n+1, ...]"', function (done) {
+      River.new(null)
+      .job(function (j) {
+        Topogo.run("SELECT @t.* FROM @t WHERE name IN @names", {TABLES: {t: table}, names: [name, name]}, j);
+      })
+      .job(function (j, result) {
+        assert.equal(result[0].name, name);
+        done();
+      })
+      .run();
+    });
+
     it( 'replaces all instances of values in INSERT statements', function (done) {
       River.new(null)
       .job(function (j) {
@@ -223,6 +238,7 @@ describe('Topogo:', function () {
       })
       .run();
     });
+
   }); // === end desc
 
   // ================================================================
