@@ -40,6 +40,12 @@ function strip(s) {
 
 describe( 'Model:', function () {
 
+  describe( '.sql_quote', function () {
+    it( 'removes all instances of invalid chars', function () {
+      assert.equal(Topogo.sql_quote("-T", "-id"), '"T"."id"');
+    });
+  }); // === end desc
+
   describe( '.select_as', function () {
     it( 'returns a SELECT substring', function () {
       var target = '"Website".id AS "Website_id", "Website".trashed_at AS "Website_trashed_at"';
