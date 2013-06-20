@@ -92,7 +92,13 @@ describe( 'Model:', function () {
       Topogo._tables = {T: ['trashed_at'], W: ['trashed_at'], Z: []}
       var target = '( ("T"."trashed_at" IS NULL AND "W"."trashed_at" IS NULL) )';
       var val    = Topogo.where_readable('T', 'W', 'Z');
-      console.log(val)
+      assert.equal(strip(val), strip(target));
+    });
+
+    it( 'generates a WHERE substring with author_id or owner_id', function () {
+      Topogo._tables = {T: ['owner_id'], W: ['author_id'], Z: []}
+      var target = '( ("T"."owner_id" IN @sn_ids AND "W"."author_id" IN @sn_ids) )';
+      var val    = Topogo.where_readable('T', 'W', 'Z');
       assert.equal(strip(val), strip(target));
     });
   }); // === end desc
