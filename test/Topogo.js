@@ -214,7 +214,7 @@ describe('Topogo:', function () {
       .run();
     });
 
-    it( 'replaces vars for arrays with "[ $n, $n+1, ...]"', function (done) {
+    it( 'replaces vars for arrays with "( $n, $n+1, ...)"', function (done) {
       River.new(null)
       .job(function (j) {
         Topogo.run("SELECT @t.* FROM @t WHERE name IN @names", {TABLES: {t: table}, names: [name, name]}, j);
