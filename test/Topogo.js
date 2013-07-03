@@ -126,7 +126,8 @@ describe( 'Describe tables:', function () {
       Topogo.tables(j);
     })
     .job(function (j, o) {
-      assert.deepEqual(o[table], ["id","name","body","created_at","updated_at","trashed_at"]);
+      assert.deepEqual(o[table].indexOf('id'), 0);
+      assert.deepEqual(o[table].indexOf('website_id'), 3);
       done();
     })
     .run();
