@@ -239,10 +239,10 @@ describe('Topogo:', function () {
     it( 'replaces all instances of values in INSERT statements', function (done) {
       River.new(null)
       .job(function (j) {
-        Topogo.run(Topogo.new(table), "INSERT INTO @table (name, body) VALUES (@name, @body) RETURNING * ;", {name: name, body: "123"}, j);
+        Topogo.run(Topogo.new(table), "INSERT INTO @table (name, body) VALUES (@name, @body) RETURNING * ;", {name: name + '2', body: "123"}, j);
       })
       .job(function (j, result) {
-        assert.equal(result[0].name, name);
+        assert.equal(result[0].name, name+'2');
         assert.equal(result[0].body, '123');
         done();
       })
@@ -379,6 +379,22 @@ describe('Topogo:', function () {
           assert.equal(row.id, id);
           done();
         });
+      }).run();
+    });
+
+  }); // === end desc
+
+  describe( '.update_one', function () {
+
+    it( 'returns one row', function (done) {
+      body = "new body " + rand();
+      River.new(null)
+      .job(function (j) {
+        T.update_one({name: name}, {body: body}, j);
+      })
+      .job(function (j, last) {
+        assert.equal(last.id, id);
+        done();
       }).run();
     });
 
