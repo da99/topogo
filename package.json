@@ -23,7 +23,8 @@
     "any-db": "0.x.x",
     "uri-js": "1.x.x",
     "underscore": "1.x.x",
-    "da_river": "0.4.x"
+    "da_river": "0.x.x",
+    "escape_escape_escape": "x.x.x"
   },
   "devDependencies": {}
 }

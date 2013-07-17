@@ -145,7 +145,7 @@ describe('Topogo:', function () {
       Topogo.run("CREATE TABLE IF NOT EXISTS \"" + table +
                  "\" (\n" +
                  " id serial PRIMARY KEY, \n" +
-                 " name varchar(10), \n" +
+                 " name varchar(50), \n" +
                  " body text ,   \n" +
                  " website_id  $id_type , \n" +
                  " $owner_able , \n" +
@@ -244,6 +244,19 @@ describe('Topogo:', function () {
       .job(function (j, result) {
         assert.equal(result[0].name, name+'2');
         assert.equal(result[0].body, '123');
+        done();
+      })
+      .run();
+    });
+
+    it( 'escapes HTML content', function (done) {
+      River.new(null)
+      .job(function (j) {
+        Topogo.run(Topogo.new(table), "INSERT INTO @table (name, body) VALUES (@name, @body) RETURNING * ;", {name: ">>t", body: "<<b &amp;"}, j);
+      })
+      .job(function (j, rows) {
+        assert.equal('&gt;&gt;t', rows[0].name);
+        assert.equal('&lt;&lt;b &amp;', rows[0].body);
         done();
       })
       .run();
