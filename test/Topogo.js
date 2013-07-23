@@ -405,13 +405,13 @@ describe('Topogo:', function () {
   // ================================================================
 
 
-  describe( '.update', function () {
+  describe( '.update_where_set', function () {
 
     it( 'updates record with string id', function (done) {
       body = "new body " + rand();
       River.new(null)
       .job(function (j) {
-        T.update(id.toString(), {body: body}, j);
+        T.update_where_set(id.toString(), {body: body}, j);
       })
       .job(function (j, last) {
         assert.equal(last.id, id);
@@ -545,7 +545,7 @@ describe('Topogo:', function () {
 
       River.new(null)
       .job(function (j) {
-        T.update(id, {trashed_at: day_almost_4}, j);
+        T.update_where_set(id, {trashed_at: day_almost_4}, j);
       })
       .job(function (j, last) {
         T.delete_trashed(4, j);
@@ -568,7 +568,7 @@ describe('Topogo:', function () {
       var day_3 = H.days_ago(3);
       River.new(null)
       .job(function (j) {
-        T.update(id, {trashed_at: day_3}, j);
+        T.update_where_set(id, {trashed_at: day_3}, j);
       })
       .job(function (j, last) {
         T.delete_trashed(3, j);
