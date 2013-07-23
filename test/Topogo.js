@@ -6,6 +6,8 @@ var _      = require('underscore')
 , assert   = require('assert')
 ;
 
+process.env.IS_TEST = true;
+
 var table = Topogo.test_table_name.toUpperCase();
 var T     = Topogo.new(table);
 var Q     = T.pool();
@@ -37,6 +39,7 @@ function rand() { return parseInt(Math.random() * 1000); }
 function strip(s) {
   return s.trim().split(/[\s\n]+/).join(" ");
 }
+
 
 describe( 'Model:', function () {
 
@@ -293,6 +296,46 @@ describe('Topogo:', function () {
     });
   }); // === end desc
 
+  describe( '.run_and_return_1', function () {
+
+    it( 'returns one row', function (done) {
+      River.new(null)
+      .job(function (j) {
+        Topogo.new('any table')
+        .run_and_return_1('SELECT now() AS date', {}, j);
+      })
+      .run(function (fin, last) {
+        assert.equal((new Date).getUTCDate(), last.date.getUTCDate());
+        done();
+      });
+    });
+
+    it( 'returns error if more than one result', function (done) {
+      River.new(null)
+      .on_next('error', function (j, err) {
+        assert.equal(err.message, "Too many results.");
+        done();
+      })
+      .job(function (j) {
+        Topogo.new(table)
+        .run_and_return_1('SELECT now() AS date UNION SELECT CURRENT_DATE AS date', {}, j);
+      })
+      .run();
+    });
+
+    it( 'returns error if no rows', function (done) {
+      River.new(null)
+      .on_next('error', function (j, err) {
+        assert.equal(err.message, "No row returned.");
+        done();
+      })
+      .job(function (j) {
+        Topogo.new(table)
+        .run_and_return_1('SELECT name FROM @table WHERE name = @no_one', {no_one: "no_one" + Math.random()}, j);
+      })
+      .run();
+    });
+  }); // === end desc
 
   // ================================================================
   // ================== CREATE ======================================
